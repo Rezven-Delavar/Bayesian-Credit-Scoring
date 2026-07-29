@@ -158,9 +158,9 @@ with torch.no_grad():
         x = x.to(device)
         y = y.to(device)
 
-        logits = model(x)                     # خروجی خام مدل
-        probs = torch.softmax(logits, dim=1)   # تبدیل به احتمال
-        p_pred = probs[:, 1]                  # احتمال کلاس مثبت
+        logits = model(x)                     
+        probs = torch.softmax(logits, dim=1)   
+        p_pred = probs[:, 1]                  
 
         all_probs.append(p_pred.cpu())
         all_labels.append(y.cpu())
@@ -249,7 +249,6 @@ def plot_reliability_diagram(p_pred, y_true, n_bins=10, title="Reliability Diagr
     acc  = d["accuracy"]
     cnt  = d["count"]
 
-    # فیلتر binهای خالی (NaN)
     m = ~np.isnan(conf) & ~np.isnan(acc) & (cnt > 0)
     mids, conf, acc, cnt = mids[m], conf[m], acc[m], cnt[m]
 
@@ -259,7 +258,6 @@ def plot_reliability_diagram(p_pred, y_true, n_bins=10, title="Reliability Diagr
     ax0 = ax
     ax0.plot([0, 1], [0, 1], "--", color="gray", linewidth=1, label="Perfectly calibrated")
 
-    # پهنای میله‌ها ~ عرض bin
     bin_width = 1.0 / n_bins
     ax0.bar(mids, acc, width=bin_width*0.9, color = "#bcbd22", alpha=0.6, label="Empirical frequency ")
     ax0.bar(mids, conf, width=bin_width*0.9, color =  "#7f7f7f", alpha=0.6, label="predicted ANN")
@@ -276,7 +274,7 @@ def plot_reliability_diagram(p_pred, y_true, n_bins=10, title="Reliability Diagr
     plt.tight_layout()
     plt.show()
 
-    return d  # اگر خواستی بیرون هم استفاده کنی
+    return d  
 
 
 
@@ -285,7 +283,5 @@ print(p_pred.shape)
 print(y_true.shape)
 
 
-# p_pred: آرایه شکل (N,) احتمال کلاس 1  (مثلاً p_hat)
-# y_true: آرایه شکل (N,) با 0/1
 plot_reliability_diagram(p_pred=p_pred, y_true=y_true, n_bins=15)
 
